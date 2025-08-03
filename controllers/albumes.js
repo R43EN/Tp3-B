@@ -34,6 +34,23 @@ const getAlbumes = async (_, res) => {
         res.status(500).json({ error: "Error al obtener los albumes" });
      }   
 };
+//Correción getAlbumes
+/*const getAlbumes = async (req, res) => { 
+    try {
+        const result = await query(`
+            SELECT
+                albumes.id,
+                albumes.nombre,
+                artistas.nombre AS nombre_artista
+            FROM albumes
+            JOIN artistas ON albumes.artista = artistas.id
+        `); 
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener los albumes", error);
+        res.status(500).json({ error: "Error al obtener los albumes" });
+    }
+};*/
 
 const getAlbum = async (req, res) => {
     // Completar con la consulta que devuelve un album por id
@@ -49,7 +66,7 @@ const getAlbum = async (req, res) => {
    try {
         const result = await query(`
             SELECT
-            abumes.id,
+            albumes.id,
             albumes.nombre,
             artistas.nombre AS nombre_artista,
             FROM albumes,
@@ -62,8 +79,25 @@ const getAlbum = async (req, res) => {
         res.status(500).json({ error: "Error al obtener el album" });
     }
 }; 
-
-
+// Corrección getAlbum
+/*const getAlbum = async (req, res) => {
+    try {
+        const result = await query(`
+            SELECT
+                albumes.id,
+                albumes.nombre,
+                artistas.nombre AS nombre_artista
+            FROM albumes
+            JOIN artistas ON albumes.artista = artistas.id
+            WHERE albumes.id = $1`,
+            [req.params.id]);
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error("Error al obtener el album:", error);
+        res.status(500).json({ error: "Error al obtener el album" });
+    }
+};
+*/
 const createAlbum = async (req, res) => {
     // Completar con la consulta que crea un album
     // Recordar que los parámetros de una consulta POST se encuentran en req.body
@@ -87,6 +121,23 @@ const createAlbum = async (req, res) => {
         res.status(500).json({ error:"Error al crear un album" });
     }
 };
+
+// Correción createAlbum
+/*
+const createAlbum = async (req, res) => {
+    try {
+        const { nombre, artista } = req.body;
+        await query(`
+            INSERT INTO albumes (nombre, artista)
+            VALUES ($1, $2)`,
+            [nombre, artista]);
+        res.status(201).json({ nombre, artista });
+    } catch (error) {
+        console.error("Error al crear un album:", error);
+        res.status(500).json({ error: "Error al crear un album" });
+    }
+};
+*/
 const updateAlbum = async (req, res) => {
     // Completar con la consulta que actualiza un album
     // Recordar que en este caso tienen parámetros en req.params (el id) y en req.body (los demás datos)
@@ -110,6 +161,24 @@ const updateAlbum = async (req, res) => {
         res.status(500).json({ error: "Error al el album" });
     }
 };
+
+// Correción updateAlbum
+/*const updateAlbum = async (req, res) => {
+    try {
+        const { nombre, artista } = req.body;
+        await query(`
+            UPDATE albumes
+            SET nombre = $1, artista = $2
+            WHERE id = $3`,
+            [nombre, artista, req.params.id]); // Added req.params.id
+        res.json({ id: req.params.id, nombre, artista }); // Return updated album info
+    } catch (error) {
+        console.error("Error al actualizar el album:", error);
+        res.status(500).json({ error: "Error al actualizar el album" });
+    }
+};
+*/
+
 const deleteAlbum = async (req, res) => {
     // Completar con la consulta que elimina un album
     // Recordar que los parámetros de una consulta DELETE se encuentran en req.params
@@ -133,6 +202,29 @@ const deleteAlbum = async (req, res) => {
         res.status(500).json({ error: "Error al eliminar un album" });
     }
 };
+
+// Correción deleteAlbum
+/*const deleteAlbum = async (req, res) => {
+    try {
+        const canciones = await query(`
+            SELECT *
+            FROM canciones
+            WHERE album = $1`, // Check for songs associated with this album ID
+            [req.params.id]);
+        if (canciones.rows.length > 0) {
+            return res.status(400).json({ error: "El album tiene canciones asociadas y no puede ser eliminado." });
+        }
+        await query(`
+            DELETE FROM albumes
+            WHERE id = $1`,
+            [req.params.id]);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("Error al eliminar un album:", error);
+        res.status(500).json({ error: "Error al eliminar un album" });
+    }
+};
+*/
 
 const getCancionesByAlbum = async (req, res) => {
     // Completar con la consulta que devuelve las canciones de un album
