@@ -171,7 +171,7 @@ const updateAlbum = async (req, res) => {
             SET nombre = $1, artista = $2
             WHERE id = $3`,
             [nombre, artista, req.params.id]); // Added req.params.id
-        res.json({ id: req.params.id, nombre, artista }); // Return updated album info
+        res.json({ id: req.params.id, nombre, artista }); 
     } catch (error) {
         console.error("Error al actualizar el album:", error);
         res.status(500).json({ error: "Error al actualizar el album" });
@@ -209,7 +209,7 @@ const deleteAlbum = async (req, res) => {
         const canciones = await query(`
             SELECT *
             FROM canciones
-            WHERE album = $1`, // Check for songs associated with this album ID
+            WHERE album = $1`, 
             [req.params.id]);
         if (canciones.rows.length > 0) {
             return res.status(400).json({ error: "El album tiene canciones asociadas y no puede ser eliminado." });
@@ -249,6 +249,30 @@ const getCancionesByAlbum = async (req, res) => {
         res.status(500).json({ error: "Error al obtener las canciones del album" });
     }
 };
+
+// Correción getCancionesByAlbum
+/*const getCancionesByAlbum = async (req, res) => {
+    try {
+        const result = await query(`
+            SELECT
+                canciones.id,
+                canciones.nombre,
+                canciones.duracion,
+                canciones.reproducciones,
+                artistas.nombre AS nombre_artista,
+                albumes.nombre AS nombre_album
+            FROM canciones
+            JOIN albumes ON canciones.album = albumes.id
+            JOIN artistas ON albumes.artista = artistas.id
+            WHERE canciones.album = $1`, 
+            [req.params.id]);
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener las canciones del album:", error);
+        res.status(500).json({ error: "Error al obtener las canciones del album" });
+    }
+};
+*/
 
 const albumes = {
     getAlbumes,
