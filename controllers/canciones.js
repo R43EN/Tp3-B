@@ -47,6 +47,31 @@ const getCanciones = async (_, res) => {
         res.status(500).json({ error: "Error al obtener las canciones" });
     }
 };
+
+// Correción getCanciones
+/*
+const getCanciones = async (_, res) => { 
+    try {
+        const result = await query(`
+            SELECT
+                canciones.id,
+                canciones.nombre,
+                artistas.nombre AS nombre_artista,
+                albumes.nombre AS nombre_album,
+                canciones.duracion,
+                canciones.reproducciones
+            FROM canciones
+            JOIN albumes ON canciones.album = albumes.id
+            JOIN artistas ON albumes.artista = artistas.id
+        `); 
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener las canciones", error);
+        res.status(500).json({ error: "Error al obtener las canciones" });
+    }
+};
+*/
+
 const getCancion = async (req, res) => {
     // Completar con la consulta que devuelve una canción
     // Recordar que los parámetros de una consulta GET se encuentran en req.params
@@ -82,6 +107,31 @@ const getCancion = async (req, res) => {
         res.status(500).json({ error: "Error al obtener la cancion" });
     }
 };
+
+// Correción getCancion
+/*const getCancion = async (req, res) => {
+    try {
+        const result = await query(`
+            SELECT
+                canciones.id,
+                canciones.nombre,
+                canciones.duracion,
+                canciones.reproducciones,
+                artistas.nombre AS nombre_artista,
+                albumes.nombre AS nombre_album
+            FROM canciones
+            JOIN albumes ON canciones.album = albumes.id
+            JOIN artistas ON albumes.artista = artistas.id
+            WHERE canciones.id = $1`,
+            [req.params.id]);
+        res.json(result.rows[0]); 
+    } catch (error) {
+        console.error("Error al obtener la cancion", error);
+        res.status(500).json({ error: "Error al obtener la cancion" });
+    }
+};
+*/
+
 const createCancion = async (req, res) => {
     // Completar con la consulta que crea una canción
     // Recordar que los parámetros de una consulta POST se encuentran en req.body
@@ -107,7 +157,8 @@ const createCancion = async (req, res) => {
         res.status(500).json({ error: "Error al crear la canción"});
     }
 };
-            
+
+
         
 const updateCancion = async (req, res) => {
     // Completar con la consulta que actualiza una canción
@@ -136,6 +187,24 @@ const updateCancion = async (req, res) => {
         res.status(500).json({ error: "Error al actualizar la canción"});
     }
 };
+
+// Correción updateCancion
+/*
+const updateCancion = async (req, res) => {
+    try {
+        const { nombre, album, duracion } = req.body;
+        await query(`
+            UPDATE canciones
+            SET nombre = $1, album = $2, duracion = $3
+            WHERE id = $4`,
+            [nombre, album, duracion, req.params.id]); 
+        res.json({ id: req.params.id, nombre, album, duracion }); 
+    } catch (error) {
+        console.error("Error al actualizar la canción:", error);
+        res.status(500).json({ error: "Error al actualizar la canción" });
+    }
+};
+*/
 const deleteCancion = async (req, res) => {
     // Completar con la consulta que elimina una canción
     // Recordar que los parámetros de una consulta DELETE se encuentran en req.params
@@ -161,6 +230,26 @@ const deleteCancion = async (req, res) => {
         res.status(500).json({ error: "Error al eliminar una cancion:" });
     }
 };
+
+// Corrected deleteCancion
+/*const deleteCancion = async (req, res) => {
+    try {
+        // Removed the check for associated albums as it's not relevant for deleting a song.
+        // If a song is part of an album, deleting the song simply removes it from that album.
+        // No need to prevent deletion based on album association.
+
+        await query(`
+            DELETE FROM canciones
+            WHERE id = $1`,
+            [req.params.id]);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("Error al eliminar una cancion:", error);
+        res.status(500).json({ error: "Error al eliminar una cancion" });
+    }
+};
+*/
+
 const reproducirCancion = async (req, res) => {
     // Completar con la consulta que aumenta las reproducciones de una canción
     // En este caso es una consulta PUT, pero no recibe ningún parámetro en el body, solo en los params

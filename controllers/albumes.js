@@ -170,7 +170,7 @@ const updateAlbum = async (req, res) => {
             UPDATE albumes
             SET nombre = $1, artista = $2
             WHERE id = $3`,
-            [nombre, artista, req.params.id]); // Added req.params.id
+            [nombre, artista, req.params.id]); 
         res.json({ id: req.params.id, nombre, artista }); 
     } catch (error) {
         console.error("Error al actualizar el album:", error);
